@@ -1,5 +1,12 @@
 # Order Matching Engine
 
+## Table of Contents
+- [Order Matching Engine](#order-matching-engine)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Features](#features)
+  - [Messages](#messages)
+
 ## Introduction
 
 This is a simple order matching engine that matches buy and sell orders for a stock. The engine is implemented in C++.
