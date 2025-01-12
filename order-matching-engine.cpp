@@ -2,11 +2,30 @@
 #include<optional>
 #include<sstream>
 #include<vector>
+#include<map>
 #include"messages.hpp"
 using namespace std;
 
+// Custom comparator for reverse sorting
+struct ReverseSort {
+    bool operator()(int a, int b) const {
+        return a > b; // Sort in descending order
+    }
+};
+
+map<int, string, ReverseSort> buyOrders;    // Buy orders sorted in descending order
+map<int, string> sellOrders;                // Sell orders sorted in ascending order
+
 int main() {
-    Message m = MessageBuilder().setOrderId(1).setClientId(1).setInstrument("AAPL").setSide(Side::BUY).setQuantity(100).setType(OrderType::LIMIT).setPrice(100).build();
+    Message m = MessageBuilder()
+                    .setOrderId(1)
+                    .setClientId(1)
+                    .setInstrument("AAPL")
+                    .setSide(Side::BUY)
+                    .setQuantity(100)
+                    .setType(OrderType::LIMIT)
+                    .setPrice(100)
+                    .build();
 
     m.display();
 
