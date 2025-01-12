@@ -23,6 +23,14 @@ void addOrder(string s) {
     Message m = Message(s);
 
     //TODO: Implementare XD
+
+    // Capire che tipo di ordine è
+
+    // Capire se market o limit
+
+    // Se market verificare se c'è liquidità
+
+    // Se limit inserire nella coda del prezzo giusto
 }
 
 int main() {
