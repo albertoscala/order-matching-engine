@@ -17,8 +17,6 @@ enum class Side {
 enum class OrderType {
     MARKET = 1,
     LIMIT = 2,
-    STOP = 3,
-    STOP_LIMIT = 4
 };
 
 class Message {
@@ -30,9 +28,8 @@ private:
     optional<int> quantity;         // Number of units to trade
     optional<int> type;             // Order type
     optional<int> price;            // Price for the limit or stop-limit orders
-    optional<int> stopPrice;        // Stop price for the stop and stop-limit orders
 public:
-    Message(optional<int> orderId, optional<int> clientId, optional<string> instrument, optional<int> side, optional<int> quantity, optional<int> type, optional<int> price, optional<int> stopPrice);
+    Message(optional<int> orderId, optional<int> clientId, optional<string> instrument, optional<int> side, optional<int> quantity, optional<int> type, optional<int> price);
 
     Message(string fixMessage);
 
@@ -50,7 +47,6 @@ private:
     optional<int> quantity;     // NUmber of units to trade
     optional<int> type;         // Order type
     optional<int> price;        // Price for the limit or stop-limit orders
-    optional<int> stopPrice;    // Stop price for the stop and stop-limit orders
 public:
     MessageBuilder& setOrderId(int orderId);
 
@@ -65,8 +61,6 @@ public:
     MessageBuilder& setType(OrderType type);
 
     MessageBuilder& setPrice(int price);
-
-    MessageBuilder& setStopPrice(int stopPrice);
 
     Message build();
 };

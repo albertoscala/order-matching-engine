@@ -20,7 +20,7 @@ vector<string> split(string s, char delimiter) {
 }
 
 // Message class methods
-Message::Message(optional<int> orderId, optional<int> clientId, optional<string> instrument, optional<int> side, optional<int> quantity, optional<int> type, optional<int> price, optional<int> stopPrice) {
+Message::Message(optional<int> orderId, optional<int> clientId, optional<string> instrument, optional<int> side, optional<int> quantity, optional<int> type, optional<int> price) {
     if (orderId.has_value()) {
         this->orderId = orderId;
     }
@@ -41,9 +41,6 @@ Message::Message(optional<int> orderId, optional<int> clientId, optional<string>
     }
     if (price.has_value()) {
         this->price = price;
-    }
-    if (stopPrice.has_value()) {
-        this->stopPrice = stopPrice;
     }
 };
 
@@ -72,8 +69,6 @@ Message::Message(string fixMessage) {
             this->type = stoi(keyValue[1]);
         } else if (keyValue[0] == "44") {
             this->price = stoi(keyValue[1]);
-        } else if (keyValue[0] == "99") {
-            this->stopPrice = stoi(keyValue[1]);
         }
     }
 };
@@ -107,10 +102,6 @@ void Message::display() {
         cout << "Price: " << price.value() << endl;
     }
 
-    if (stopPrice.has_value()) {
-        cout << "Stop Price: " << stopPrice.value() << endl;
-    }
-
 };
 
 string Message::toFixMessage() {
@@ -142,10 +133,6 @@ string Message::toFixMessage() {
 
     if (price.has_value()) {
         fixMessage += "44=" + to_string(price.value()) + "|";
-    }
-
-    if (stopPrice.has_value()) {
-        fixMessage += "99=" + to_string(stopPrice.value()) + "|";
     }
 
     return fixMessage;
@@ -187,11 +174,6 @@ MessageBuilder& MessageBuilder::setPrice(int price) {
     return *this;
 }
 
-MessageBuilder& MessageBuilder::setStopPrice(int stopPrice) {
-    this->stopPrice = stopPrice;
-    return *this;
-}
-
 Message MessageBuilder::build() {
-    return Message(orderId, clientId, instrument, side, quantity, type, price, stopPrice);
+    return Message(orderId, clientId, instrument, side, quantity, type, price);
 }
