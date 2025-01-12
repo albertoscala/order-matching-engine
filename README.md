@@ -33,7 +33,6 @@ side         // Buy or sell
 quantity     // NUmber of units to trade
 type         // Order type
 price        // Price for the limit or stop-limit orders
-stopPrice    // Stop price for the stop and stop-limit orders
 ```
 
 The messages are passed using the FIX message format.
