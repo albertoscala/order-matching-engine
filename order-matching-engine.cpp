@@ -16,16 +16,17 @@ struct ReverseSort {
 map<int, string, ReverseSort> buyOrders;    // Buy orders sorted in descending order
 map<int, string> sellOrders;                // Sell orders sorted in ascending order
 
+// Order Matching Engine
+// Time Priority
+// Market order with no liquidity are rejected
+void addOrder(string s) {
+    Message m = Message(s);
+
+    //TODO: Implementare XD
+}
+
 int main() {
-    Message m = MessageBuilder()
-                    .setOrderId(1)
-                    .setClientId(1)
-                    .setInstrument("AAPL")
-                    .setSide(Side::BUY)
-                    .setQuantity(100)
-                    .setType(OrderType::LIMIT)
-                    .setPrice(100)
-                    .build();
+    Message m = MessageBuilder(1, 1, "AAPL", Side::BUY, 100, OrderType::LIMIT).setPrice(100).build();
 
     m.display();
 

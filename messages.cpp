@@ -20,25 +20,20 @@ vector<string> split(string s, char delimiter) {
 }
 
 // Message class methods
-Message::Message(optional<int> orderId, optional<int> clientId, optional<string> instrument, optional<int> side, optional<int> quantity, optional<int> type, optional<int> price) {
-    if (orderId.has_value()) {
-        this->orderId = orderId;
-    }
-    if (clientId.has_value()) {
-        this->clientId = clientId;
-    }
-    if (instrument.has_value()) {
-        this->instrument = instrument;
-    }
-    if (side.has_value()) {
-        this->side = side;
-    }
-    if (quantity.has_value()) {
-        this->quantity = quantity;
-    }
-    if (type.has_value()) {
-        this->type = type;
-    }
+Message::Message(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type, optional<int> price) {
+
+    this->orderId = orderId;
+
+    this->clientId = clientId;
+
+    this->instrument = instrument;
+
+    this->side = side;
+
+    this->quantity = quantity;
+
+    this->type = type;
+
     if (price.has_value()) {
         this->price = price;
     }
@@ -62,11 +57,11 @@ Message::Message(string fixMessage) {
         } else if (keyValue[0] == "55") {
             this->instrument = keyValue[1];
         } else if (keyValue[0] == "54") {
-            this->side = stoi(keyValue[1]);
+            this->side = static_cast<Side>(stoi(keyValue[1]));
         } else if (keyValue[0] == "38") {
             this->quantity = stoi(keyValue[1]);
         } else if (keyValue[0] == "40") {
-            this->type = stoi(keyValue[1]);
+            this->type = static_cast<OrderType>(stoi(keyValue[1]));
         } else if (keyValue[0] == "44") {
             this->price = stoi(keyValue[1]);
         }
@@ -74,29 +69,18 @@ Message::Message(string fixMessage) {
 };
 
 void Message::display() {
-    if (orderId.has_value()) {
-        cout << "Order Id: " << orderId.value() << endl;
-    }
 
-    if (clientId.has_value()) {
-        cout << "Client Id: " << clientId.value() << endl;
-    }
+    cout << "Order Id: " << orderId << endl;
 
-    if (instrument.has_value()) {
-        cout << "Instrument: " << instrument.value() << endl;
-    }
+    cout << "Client Id: " << clientId << endl;
 
-    if (side.has_value()) {
-        cout << "Side: " << side.value() << endl;
-    }
+    cout << "Instrument: " << instrument << endl;
 
-    if (quantity.has_value()) {
-        cout << "Quantity: " << quantity.value() << endl;
-    }
+    cout << "Side: " << static_cast<int>(side) << endl;
 
-    if (type.has_value()) {
-        cout << "Type: " << type.value() << endl;
-    }
+    cout << "Quantity: " << quantity << endl;
+
+    cout << "Type: " << static_cast<int>(type) << endl;
 
     if (price.has_value()) {
         cout << "Price: " << price.value() << endl;
@@ -107,29 +91,17 @@ void Message::display() {
 string Message::toFixMessage() {
     string fixMessage = "";
 
-    if (orderId.has_value()) {
-        fixMessage += "11=" + to_string(orderId.value()) + "|";
-    }
+    fixMessage += "11=" + to_string(orderId) + "|";
 
-    if (clientId.has_value()) {
-        fixMessage += "1=" + to_string(clientId.value()) + "|";
-    }
+    fixMessage += "1=" + to_string(clientId) + "|";
 
-    if (instrument.has_value()) {
-        fixMessage += "55=" + instrument.value() + "|";
-    }
+    fixMessage += "55=" + instrument + "|";
 
-    if (side.has_value()) {
-        fixMessage += "54=" + to_string(side.value()) + "|";
-    }
+    fixMessage += "54=" + to_string(static_cast<int>(side)) + "|";
 
-    if (quantity.has_value()) {
-        fixMessage += "38=" + to_string(quantity.value()) + "|";
-    }
+    fixMessage += "38=" + to_string(quantity) + "|";
 
-    if (type.has_value()) {
-        fixMessage += "40=" + to_string(type.value()) + "|";
-    }
+    fixMessage += "40=" + to_string(static_cast<int>(type)) + "|";
 
     if (price.has_value()) {
         fixMessage += "44=" + to_string(price.value()) + "|";
@@ -139,35 +111,14 @@ string Message::toFixMessage() {
 };
 
 // MessageBuilder class methods
-MessageBuilder& MessageBuilder::setOrderId(int orderId) {
+MessageBuilder::MessageBuilder(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type) {
     this->orderId = orderId;
-    return *this;
-}
-
-MessageBuilder& MessageBuilder::setClientId(int clientId) {
     this->clientId = clientId;
-    return *this;
-}
-
-MessageBuilder& MessageBuilder::setInstrument(string instrument) {
     this->instrument = instrument;
-    return *this;
-}
-
-MessageBuilder& MessageBuilder::setSide(Side side) {
-    this->side = static_cast<int>(side);
-    return *this;
-}
-
-MessageBuilder& MessageBuilder::setQuantity(int quantity) {
+    this->side = side;
     this->quantity = quantity;
-    return *this;
-}
-
-MessageBuilder& MessageBuilder::setType(OrderType type) {
-    this->type = static_cast<int>(type);
-    return *this;
-}
+    this->type = type;
+};
 
 MessageBuilder& MessageBuilder::setPrice(int price) {
     this->price = price;
