@@ -37,6 +37,9 @@ public:
 
     string toFixMessage();
 
+    // Setters
+    void setQuantity(int quantity);
+
     // Getters
     int getOrderId();
 
@@ -44,11 +47,11 @@ public:
 
     string getInstrument();
 
-    int getSide();
+    Side getSide();
 
     int getQuantity();
 
-    int getType();
+    OrderType getType();
 
     optional<int> getPrice();
 };

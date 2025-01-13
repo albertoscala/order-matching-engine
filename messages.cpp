@@ -110,6 +110,40 @@ string Message::toFixMessage() {
     return fixMessage;
 };
 
+// Setters
+void Message::setQuantity(int quantity) {
+    this->quantity = quantity;
+};
+
+// Getters
+int Message::getOrderId() {
+    return this->orderId;
+}
+
+int Message::getClientId() {
+    return this->clientId;
+}
+
+string Message::getInstrument() {
+    return this->instrument;
+}
+
+Side Message::getSide() {
+    return this->side;
+}
+
+int Message::getQuantity() {
+    return this->quantity;
+}
+
+OrderType Message::getType() {
+    return this->type;
+}
+
+optional<int> Message::getPrice() {
+    return this->price.value();
+}
+
 // MessageBuilder class methods
 MessageBuilder::MessageBuilder(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type) {
     this->orderId = orderId;
