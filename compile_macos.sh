@@ -1,1 +1,1 @@
-clang++ -std=c++17 order-matching-engine.cpp messages.hpp messages.cpp
+clang++ -std=c++17 order-matching-engine.cpp messages.hpp messages.cpp transactions.hpp transactions.cpp
