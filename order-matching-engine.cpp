@@ -121,6 +121,56 @@ void marketBuyFlow(Message m) {
 void marketSellFlow(Message m) {
     
     // Check if there is enough liquidity
+    if (checkBuyLiquidity() >= m.getQuantity()) { 
+        
+        // Go to the last price level
+        for (auto it = buyOrders.begin(); it != buyOrders.end(); it++) {
+            
+            // Iterate over the sell orders
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+                
+                // Get the order
+                Message order = Message(*it2);
+
+                // Check if the order quantity is greater than the market order quantity
+                if (order.getQuantity() >= m.getQuantity()) {
+                    
+                    // Update the order quantity
+                    order.setQuantity(order.getQuantity() - m.getQuantity());
+
+                    // Check if the order quantity is zero
+                    if (order.getQuantity() == 0) {
+                        // Remove the order
+                        buyOrders[it->first].erase(it2);
+                    }
+
+                    // Update the order inposition
+                    buyOrders[it->first].insert(it2, order.toFixMessage());
+
+                    // Record the trade
+                    trades.push_back(Transaction(trades.size() + 1, m.getOrderId(), m.getClientId(), order.getClientId(), m.getInstrument(), m.getQuantity(), order.getPrice().value()));
+
+                    // Break the loop
+                    break;
+                } else {
+                    
+                    // Update the market order quantity
+                    m.setQuantity(m.getQuantity() - order.getQuantity());
+
+                    // Remove the order
+                    buyOrders[it->first].erase(it2);
+                }
+            }
+
+            // Check if the market order quantity is zero
+            if (m.getQuantity() == 0) {
+                break;
+            }
+        }
+
+    } else {
+        cout << "Not enough liquidity" << endl;
+    }
 
 }
 
