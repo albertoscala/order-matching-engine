@@ -20,7 +20,7 @@ vector<string> split(string s, char delimiter) {
 }
 
 // Message class methods
-Message::Message(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type, optional<int> price) {
+Message::Message(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type, optional<float> price) {
 
     this->orderId = orderId;
 
@@ -140,7 +140,7 @@ OrderType Message::getType() {
     return this->type;
 }
 
-optional<int> Message::getPrice() {
+optional<float> Message::getPrice() {
     return this->price.value();
 }
 
@@ -154,7 +154,7 @@ MessageBuilder::MessageBuilder(int orderId, int clientId, string instrument, Sid
     this->type = type;
 };
 
-MessageBuilder& MessageBuilder::setPrice(int price) {
+MessageBuilder& MessageBuilder::setPrice(float price) {
     this->price = price;
     return *this;
 }

@@ -15,8 +15,8 @@ struct ReverseSort {
 };
 
 // Orderbooks
-map<int, vector<string>, ReverseSort> buyOrders;    // Buy orders sorted in descending order
-map<int, vector<string>> sellOrders;                // Sell orders sorted in ascending order
+map<float, vector<string>, ReverseSort> buyOrders;    // Buy orders sorted in descending order
+map<float, vector<string>> sellOrders;                // Sell orders sorted in ascending order
 vector<Transaction> trades;                         // List of trades
 
 int checkBuyLiquidity() {
@@ -214,7 +214,7 @@ void addOrder(string s) {
 }
 
 int main() {
-    Message m = MessageBuilder(1, 1, "AAPL", Side::BUY, 100, OrderType::LIMIT).setPrice(100).build();
+    Message m = MessageBuilder(1, 1, "AAPL", Side::BUY, 100, OrderType::LIMIT).setPrice(100.5).build();
 
     m.display();
 

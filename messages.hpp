@@ -27,9 +27,9 @@ private:
     Side            side;               // Buy or sell
     int             quantity;           // Number of units to trade
     OrderType       type;               // Order type
-    optional<int>   price;              // Price for the limit or stop-limit orders
+    optional<float>   price;              // Price for the limit or stop-limit orders
 public:
-    Message(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type, optional<int> price);
+    Message(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type, optional<float> price);
 
     Message(string fixMessage);
 
@@ -53,7 +53,7 @@ public:
 
     OrderType getType();
 
-    optional<int> getPrice();
+    optional<float> getPrice();
 };
 
 class MessageBuilder {
@@ -64,11 +64,11 @@ private:
     Side            side;               // Buy or sell
     int             quantity;           // Number of units to trade
     OrderType       type;               // Order type
-    optional<int>   price;              // Price for the limit or stop-limit orders
+    optional<float>   price;              // Price for the limit or stop-limit orders
 public:
     MessageBuilder(int orderId, int clientId, string instrument, Side side, int quantity, OrderType type);
 
-    MessageBuilder& setPrice(int price);
+    MessageBuilder& setPrice(float price);
 
     Message build();
 };
