@@ -22,3 +22,7 @@ void Transaction::display() {
     cout << "Timestamp: " << this->timestamp << endl;
     cout << "----------------------" << endl;
 }
+
+string Transaction::inlineDisplay() {
+    return to_string(this->tradeId) +  "," + to_string(this->orderId) + "," + to_string(this->buyerId) + "," + to_string(this->sellerId) + "," + this->instrument + "," + to_string(this->quantity) + "," + to_string(this->price) + "," + to_string(this->timestamp) + "\n";
+}

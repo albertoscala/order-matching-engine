@@ -3,6 +3,7 @@
 #include<sstream>
 #include<vector>
 #include<map>
+#include<fstream>
 #include"messages.hpp"
 #include"transactions.hpp"
 using namespace std;
@@ -18,6 +19,16 @@ struct ReverseSort {
 map<float, vector<string>, ReverseSort> buyOrders;    // Buy orders sorted in descending order
 map<float, vector<string>> sellOrders;                // Sell orders sorted in ascending order
 vector<Transaction> trades;                         // List of trades
+
+void downloadOrderbook() {
+    // Download the orderbook transaction history
+    for (auto it = trades.begin(); it != trades.end(); it++) {
+        // Append the trade to the orderbook
+        ofstream orderbook("orderbook.csv", ios::app);
+        orderbook << it->inlineDisplay();
+        orderbook.close();
+    }
+}
 
 int checkBuyLiquidity() {
     // Counter for the total shares available

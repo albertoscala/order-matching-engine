@@ -19,6 +19,8 @@ public:
     Transaction(int tradeId, int orderId, int buyerId, int sellerId, string instrument, int quantity, float price);
 
     void display();
+
+    string inlineDisplay();
 };
 
 #endif
