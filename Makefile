@@ -11,5 +11,8 @@ $(TARGET_A): $(SRC) $(HEADERS)
 $(TARGET_M): $(SRC) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET_M) $(SRC)
 
-clean:
-	rm -f $(TARGET)
+clean_a:
+	rm -f $(TARGET_A)
+
+clean_m:
+	rm -f $(TARGET_M)
