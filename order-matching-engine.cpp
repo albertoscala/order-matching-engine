@@ -20,6 +20,45 @@ map<float, vector<string>, ReverseSort> buyOrders;    // Buy orders sorted in de
 map<float, vector<string>> sellOrders;                // Sell orders sorted in ascending order
 vector<Transaction> trades;                         // List of trades
 
+void displayBuyOrdersVolumes() {
+    int localVolume;
+
+    cout << "BUY ORDERS" << endl;
+    
+    // Display the buy orders
+    for (auto it = buyOrders.begin(); it != buyOrders.end(); it++) {
+        cout << it->first << ": ";
+        
+        localVolume = 0;
+        
+        for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+            localVolume += Message(*it2).getQuantity();
+        }
+
+        cout << localVolume << endl;
+    }
+}
+
+void displaySellOrdersVolumes() {
+    int localVolume;
+    
+    cout << "SELL ORDERS" << endl;
+
+    // Display the sell orders
+    for (auto it = sellOrders.begin(); it != sellOrders.end(); it++) {
+        cout << it->first << ": ";
+        
+        localVolume = 0;
+        
+        for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+            localVolume += Message(*it2).getQuantity();
+        }
+
+        cout << localVolume << endl;
+    }
+
+}
+
 void downloadOrderbook() {
     // Download the orderbook transaction history
     for (auto it = trades.begin(); it != trades.end(); it++) {
@@ -71,18 +110,35 @@ int checkSellLiquidity() {
 int checkBuyLiquidityFromPrice(float price) {
     int liquidity = 0;
 
-    // Check if the first price level greater or equal to the given price exists
-    if (buyOrders.lower_bound(price) != buyOrders.end()) {
+    // Display the buy orders
+    for (auto it = buyOrders.begin(); it != buyOrders.end(); it++) {
+        cout << it->first << ": ";
+        for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+            cout << Message(*it2).getQuantity() << " ";
+        }
+        cout << endl;
+    }
+
+    // Find the first price level greater or equal to the given price
+    map<float, vector<string>>::iterator itPriceLimit = buyOrders.end();
+    
+    for (auto it = buyOrders.begin(); it != buyOrders.end(); it++) {
+        if (it->first >= price) {
+            // Get the iterator
+            itPriceLimit = it;
+        }
+    }
+
+    // Iterate over the buy orders
+    for (auto it = itPriceLimit; it != buyOrders.end(); it++) {
         
-        // Iterate over the buy orders
-        for (auto it = buyOrders.lower_bound(price); it != buyOrders.end(); it++) {
+        cout << it->first << endl;
+
+        // Iterate over the orders at the current price level
+        for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
             
-            // Iterate over the orders at the current price level
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
-                
-                // Add the quantity of the order to the total liquidity
-                liquidity += Message(*it2).getQuantity();
-            }
+            // Add the quantity of the order to the total liquidity
+            liquidity += Message(*it2).getQuantity();
         }
     }
 
@@ -92,18 +148,24 @@ int checkBuyLiquidityFromPrice(float price) {
 int checkSellLiquidityFromPrice(float price) {
     int liquidity = 0;
 
-    // Check if the first price level greater or equal to the given price exists
-    if (sellOrders.lower_bound(price) != sellOrders.end()) {
-        
-        // Iterate over the buy orders
-        for (auto it = sellOrders.lower_bound(price); it != sellOrders.end(); it++) {
-            
-            // Iterate over the orders at the current price level
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
-                
-                // Add the quantity of the order to the total liquidity
-                liquidity += Message(*it2).getQuantity();
-            }
+    // Find the first price level greater or equal to the given price
+    map<float, vector<string>>::iterator itPriceLimit = sellOrders.end();
+
+    for (auto it = sellOrders.begin(); it != sellOrders.end(); it++) {
+        if (it->first >= price) {
+            // Get the iterator
+            itPriceLimit = it;
+        }
+    }
+
+    // Iterate over the buy orders
+    for (auto it = itPriceLimit; it != sellOrders.end(); it++) {
+
+        // Iterate over the orders at the current price level
+        for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+
+            // Add the quantity of the order to the total liquidity
+            liquidity += Message(*it2).getQuantity();
         }
     }
 
@@ -198,13 +260,13 @@ void marketSellFlow(Message m) {
                     }
 
                     // Update the order inposition
-                    buyOrders[it->first].insert(it2, order.toFixMessage());
+                    *it2 = order.toFixMessage();
 
                     // Record the trade
                     trades.push_back(Transaction(trades.size() + 1, m.getOrderId(), m.getClientId(), order.getClientId(), m.getInstrument(), m.getQuantity(), order.getPrice().value()));
 
                     // Break the loop
-                    break;
+                    return;
                 } else {
                     
                     // Update the market order quantity
@@ -217,7 +279,7 @@ void marketSellFlow(Message m) {
 
             // Check if the market order quantity is zero
             if (m.getQuantity() == 0) {
-                break;
+                return;
             }
         }
 
@@ -233,7 +295,7 @@ void marketSellFlow(Message m) {
 void limitBuyFlow(Message m) {
     // Check if there is enough liquidity to fill the order
     if (checkSellLiquidityFromPrice(m.getPrice().value()) >= m.getQuantity()) {
-        
+
         // Iterate over the sell orders
         for (auto it = sellOrders.lower_bound(m.getPrice().value()); it != sellOrders.end(); it++) {
             
@@ -256,7 +318,7 @@ void limitBuyFlow(Message m) {
                     }
 
                     // Update the order inposition
-                    sellOrders[it->first].insert(it2, order.toFixMessage());
+                    *it2 = order.toFixMessage();
 
                     // Record the trade
                     trades.push_back(Transaction(trades.size() + 1, m.getOrderId(), m.getClientId(), order.getClientId(), m.getInstrument(), m.getQuantity(), order.getPrice().value()));
@@ -290,10 +352,14 @@ void limitBuyFlow(Message m) {
 void limitSellFlow(Message m) {
     // Check if there is enough liquidity to fill the order
     if (checkBuyLiquidityFromPrice(m.getPrice().value()) >= m.getQuantity()) {
-        
+
+        cout << checkBuyLiquidityFromPrice(m.getPrice().value()) << endl;
+
+        cout << m.getQuantity() << endl;
+
         // Iterate over the buy orders
         for (auto it = buyOrders.lower_bound(m.getPrice().value()); it != buyOrders.end(); it++) {
-            
+
             // Iterate over the orders at the current price level
             for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
                 
@@ -385,15 +451,35 @@ void addOrder(string s) {
 int main() {
     Message m = MessageBuilder(1, 1, "AAPL", Side::BUY, 100, OrderType::LIMIT).setPrice(100.5).build();
 
-    m.display();
+    Message m2 = MessageBuilder(2, 2, "AAPL", Side::BUY, 150, OrderType::LIMIT).setPrice(99.5).build();
 
-    cout << m.toFixMessage() << endl;
+    Message m3 = MessageBuilder(3, 3, "AAPL", Side::SELL, 200, OrderType::LIMIT).setPrice(101.5).build();
 
-    Message m2 = Message(m.toFixMessage());
+    limitBuyFlow(m);
 
-    m2.display();
+    limitBuyFlow(m2);
 
-    cout << m2.toFixMessage() << endl;
+    limitSellFlow(m3);
+
+    displayBuyOrdersVolumes();
+
+    displaySellOrdersVolumes();
+
+    Message m4 = MessageBuilder(4, 4, "AAPL", Side::SELL, 50, OrderType::MARKET).build();
+
+    marketSellFlow(m4);
+
+    displayBuyOrdersVolumes();
+
+    displaySellOrdersVolumes();
+
+    Message m5 = MessageBuilder(5, 5, "AAPL", Side::SELL, 383, OrderType::LIMIT).setPrice(100).build();
+
+    limitSellFlow(m5);
+
+    displayBuyOrdersVolumes();
+
+    displaySellOrdersVolumes();
 
     return 0;
 }
